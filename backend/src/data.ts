@@ -26,8 +26,8 @@ export const sampleProducts: Product[] = [
     description: 'Comfortable and stylish fit shirt',
   },
   {
-    name: 'Nike Sportswear Essential',
-    slug: 'nike-sportswear-essential',
+    name: 'Nike Sportswear',
+    slug: 'nike-sportswear',
     category: 'Pants',
     image: '/images/p3.png',
     price: 30,
