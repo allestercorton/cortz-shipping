@@ -43,7 +43,7 @@ export const sampleProducts: Product[] = [
     category: 'Pants',
     image: '/images/p4.png',
     price: 90,
-    countInStock: 18,
+    countInStock: 0,
     brand: 'Under Armour',
     rating: 4.6,
     numReviews: 15,
