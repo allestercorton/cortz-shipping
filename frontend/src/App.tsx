@@ -35,10 +35,10 @@ const App: React.FC = () => {
               variant='link'
               onClick={switchModeHandler}
               className='d-flex bg-none align-items-center p-0'
+              style={{ color: mode === 'light' ? 'black' : 'white' }}
             >
               {mode === 'light' ? <Sun size={20} /> : <Moon size={20} />}
             </Button>
-
             <Link to='/cart' className='nav-link'>
               Cart
               {cart.cartItems.length > 0 && (
