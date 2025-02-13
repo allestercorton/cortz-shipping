@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import productRoutes from './routes/productRoutes';
-import seedRouter from './routes/seedRouter';
+import userRoutes from './routes/userRoutes';
+import seedRoute from './routes/seedRoute';
 
 const MONGO_URI = process.env.MONGO_URI;
 mongoose.set('strictQuery', true);
@@ -19,9 +20,12 @@ app.use(
     origin: ['http://localhost:5173'],
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/products', productRoutes);
-app.use('/api/seed', seedRouter);
+app.use('/api/users', userRoutes);
+app.use('/api/seed', seedRoute);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
