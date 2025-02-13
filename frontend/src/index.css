@@ -21,4 +21,5 @@ img.large {
 
 .img-thumbnail {
   height: 80px;
+  margin-right: 1rem;
 }

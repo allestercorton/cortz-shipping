@@ -53,18 +53,18 @@ const CartPage: React.FC = () => {
                       <img
                         src={item.image}
                         alt={item.name}
-                        className='img-fluid rounded img-thumbnail'
+                        className='img-fluid rounded img-thumbnail p-0'
                       />
                       <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
-                    <Col md={3} className='flex items-center gap-2'>
+                    <Col md={3} className='d-flex align-items-center gap-2'>
                       <Button
                         onClick={() =>
                           updateCartHandler(item, item.quantity - 1)
                         }
                         variant={mode}
                         disabled={item.quantity === 1}
-                        className='flex justify-center items-center'
+                        className='d-flex justify-content-center align-items-center p-2'
                       >
                         <MinusCircle size={18} />
                       </Button>
@@ -75,7 +75,7 @@ const CartPage: React.FC = () => {
                         }
                         variant={mode}
                         disabled={item.quantity === item.countInStock}
-                        className='flex justify-center items-center'
+                        className='d-flex justify-content-center align-items-center p-2'
                       >
                         <PlusCircle size={18} />
                       </Button>
@@ -85,7 +85,7 @@ const CartPage: React.FC = () => {
                       <Button
                         variant={mode}
                         onClick={() => removeItemHandler(item)}
-                        className='flex justify-center items-center'
+                        className='d-flex justify-content-center align-items-center p-2'
                       >
                         <Trash size={18} />
                       </Button>
