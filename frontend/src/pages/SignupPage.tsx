@@ -1,28 +1,30 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Container, Form } from 'react-bootstrap';
-import { Helmet } from 'react-helmet-async';
 
 import { Store } from '../Store';
-import { useSigninMutation } from '../hooks/userHooks';
-import { getError } from '../utils';
+import { useSignupMutation } from '../hooks/userHooks';
 import { ApiError } from '../types/ApiError';
+import { getError } from '../utils';
+import { Button, Container, Form } from 'react-bootstrap';
+import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 
-const SigninPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
 
-  const { mutateAsync: signin, isPending } = useSigninMutation();
+  const { mutateAsync: signup, isPending } = useSignupMutation();
 
   useEffect(() => {
     if (!userInfo) return;
@@ -32,25 +34,49 @@ const SigninPage: React.FC = () => {
   const submitHandler = useCallback(
     async (e: React.SyntheticEvent) => {
       e.preventDefault();
+      if (password !== confirmPassword) {
+        toast.error('Passwords do not match');
+        return;
+      }
       try {
-        const data = await signin({ email, password });
+        const data = await signup({ name, email, password });
         dispatch({ type: 'USER_SIGNIN', payload: data });
         localStorage.setItem('userInfo', JSON.stringify(data));
-        navigate(redirect || '/');
+        navigate(redirect);
       } catch (error) {
         toast.error(getError(error as ApiError));
       }
     },
-    [email, password, signin, dispatch, navigate, redirect]
+    [
+      name,
+      email,
+      password,
+      confirmPassword,
+      signup,
+      dispatch,
+      navigate,
+      redirect,
+    ]
   );
 
   return (
     <Container className='small-container'>
       <Helmet>
-        <title>Sign In</title>
+        <title>Sign Up</title>
       </Helmet>
-      <h1 className='my-3'>Sign In</h1>
+      <h1 className='my-3'>Sign Up</h1>
       <Form onSubmit={submitHandler}>
+        <Form.Group className='mb-3' controlId='name'>
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type='text'
+            name='name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete='name'
+            required
+          />
+        </Form.Group>
         <Form.Group className='mb-3' controlId='email'>
           <Form.Label>Email</Form.Label>
           <Form.Control
@@ -69,23 +95,34 @@ const SigninPage: React.FC = () => {
             name='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoComplete='current-password'
+            autoComplete='new-password'
+            required
+          />
+        </Form.Group>
+        <Form.Group className='mb-3' controlId='confirmPassword'>
+          <Form.Label>Confim Password</Form.Label>
+          <Form.Control
+            type='password'
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete='new-password'
             required
           />
         </Form.Group>
         <div className='mb-3'>
           <Button type='submit' disabled={isPending}>
-            Sign In
+            Sign Up
           </Button>
           {isPending && <LoadingBox />}
         </div>
         <div className='mb-3'>
-          New Customer?{' '}
-          <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
+          Already have an account?{' '}
+          <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
         </div>
       </Form>
     </Container>
   );
 };
 
-export default SigninPage;
+export default SignupPage;
