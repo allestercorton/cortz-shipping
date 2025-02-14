@@ -17,8 +17,8 @@ import HomePage from './pages/HomePage.tsx';
 import ProductPage from './pages/ProductPage.tsx';
 import { StoreProvider } from './Store.tsx';
 import CartPage from './pages/CartPage.tsx';
+import ShippingAddressPage from './pages/ShippingAddressPage.tsx';
 import SigninPage from './pages/SigninPage.tsx';
-import ShippingPage from './pages/ShippingPage.tsx';
 import SignupPage from './pages/SignupPage.tsx';
 
 const router = createBrowserRouter(
@@ -29,7 +29,7 @@ const router = createBrowserRouter(
       <Route path='cart' element={<CartPage />} />
       <Route path='signin' element={<SigninPage />} />
       <Route path='signup' element={<SignupPage />} />
-      <Route path='shipping' element={<ShippingPage />} />
+      <Route path='shipping' element={<ShippingAddressPage />} />
     </Route>
   )
 );
