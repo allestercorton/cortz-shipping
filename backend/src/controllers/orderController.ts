@@ -3,6 +3,11 @@ import asyncHandler from 'express-async-handler';
 import { Order, OrderModel } from '../models/orderModel';
 import { Product } from '../models/productModel';
 
+export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
+  const orders = await OrderModel.find({ user: req.user._id });
+  res.json(orders);
+});
+
 export const getOrder = asyncHandler(async (req: Request, res: Response) => {
   const order = await OrderModel.findById(req.params.id);
   if (order) {

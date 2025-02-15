@@ -45,40 +45,40 @@ const App: React.FC = () => {
             <Navbar.Brand as={Link} to='/'>
               tsamazona
             </Navbar.Brand>
-          </Container>
-          <Nav className='ms-auto d-flex align-items-center gap-3'>
-            <Button
-              variant='link'
-              onClick={switchModeHandler}
-              className='d-flex bg-none align-items-center p-0'
-              style={{ color: mode === 'light' ? 'black' : 'white' }}
-            >
-              {mode === 'light' ? <Sun size={20} /> : <Moon size={20} />}
-            </Button>
-            <Link to='/cart' className='nav-link'>
-              Cart
-              {cart.cartItems.length > 0 && (
-                <Badge pill bg='danger'>
-                  {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
-                </Badge>
-              )}
-            </Link>
-            {userInfo ? (
-              <NavDropdown title={userInfo.name} id='basic-nav-dropdown'>
-                <Link
-                  className='dropdown-item'
-                  to='#signout'
-                  onClick={signoutHandler}
-                >
-                  Sign Out
-                </Link>
-              </NavDropdown>
-            ) : (
-              <Link className='nav-link' to='/signin'>
-                Sign In
+            <Nav className='ms-auto d-flex align-items-center gap-3'>
+              <Button
+                variant='link'
+                onClick={switchModeHandler}
+                className='d-flex bg-none align-items-center p-0'
+                style={{ color: mode === 'light' ? 'black' : 'white' }}
+              >
+                {mode === 'light' ? <Sun size={20} /> : <Moon size={20} />}
+              </Button>
+              <Link to='/cart' className='nav-link'>
+                Cart
+                {cart.cartItems.length > 0 && (
+                  <Badge pill bg='danger'>
+                    {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
+                  </Badge>
+                )}
               </Link>
-            )}
-          </Nav>
+              {userInfo ? (
+                <NavDropdown title={userInfo.name} id='basic-nav-dropdown'>
+                  <NavDropdown.Item as={Link} to='/orderhistory'>
+                    Order History
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={signoutHandler}>
+                    Sign Out
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Link className='nav-link' to='/signin'>
+                  Sign In
+                </Link>
+              )}
+            </Nav>
+          </Container>
         </Navbar>
       </header>
       <main>
