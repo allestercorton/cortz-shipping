@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/allestercorton/cortz-shipping#readme",
   "devDependencies": {
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
     "cross-env": "^7.0.3"
   }
 }
