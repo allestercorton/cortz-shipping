@@ -1,23 +1,101 @@
-import React, { useContext } from 'react';
-import { Store } from '../Store';
+import {
+  PayPalButtons,
+  PayPalButtonsComponentProps,
+  SCRIPT_LOADING_STATE,
+  usePayPalScriptReducer,
+} from '@paypal/react-paypal-js';
+import { useEffect } from 'react';
+import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap';
+import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
-import { useGetOrderDetailsQuery } from '../hooks/orderHooks';
+import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import {
+  useGetOrderDetailsQuery,
+  useGetPaypalClientIdQuery,
+  usePayOrderMutation,
+} from '../hooks/orderHooks';
+import { ApiError } from '../types/ApiError';
 import { getError } from '../utils';
-import { Helmet } from 'react-helmet-async';
-import { Card, Col, ListGroup, Row } from 'react-bootstrap';
 
-const OrderPage: React.FC = () => {
-  const { state } = useContext(Store);
-  const { userInfo } = state;
-
+export default function OrderPage() {
   const params = useParams();
   const { id: orderId } = params;
 
-  const { data: order, isPending, error } = useGetOrderDetailsQuery(orderId!);
+  const {
+    data: order,
+    isPending: isPendingGet,
+    error,
+    refetch,
+  } = useGetOrderDetailsQuery(orderId!);
 
-  return isPending ? (
+  const { mutateAsync: payOrder, isPending: loadingPay } =
+    usePayOrderMutation();
+
+  const testPayHandler = async () => {
+    await payOrder({ orderId: orderId! });
+    refetch();
+    toast.success('Order is paid');
+  };
+
+  const [{ isPending, isRejected }, paypalDispatch] = usePayPalScriptReducer();
+
+  const { data: paypalConfig } = useGetPaypalClientIdQuery();
+
+  useEffect(() => {
+    if (paypalConfig && paypalConfig.clientId) {
+      const loadPaypalScript = async () => {
+        paypalDispatch({
+          type: 'resetOptions',
+          value: {
+            'client-id': paypalConfig!.clientId,
+            currency: 'USD',
+          },
+        });
+        paypalDispatch({
+          type: 'setLoadingStatus',
+          value: SCRIPT_LOADING_STATE.PENDING,
+        });
+      };
+      loadPaypalScript();
+    }
+  }, [paypalConfig, paypalDispatch]);
+
+  const paypalbuttonTransactionProps: PayPalButtonsComponentProps = {
+    style: { layout: 'vertical' },
+    createOrder(data, actions) {
+      return actions.order
+        .create({
+          purchase_units: [
+            {
+              amount: {
+                value: order!.totalPrice.toString(),
+              },
+            },
+          ],
+        })
+        .then((orderID: string) => {
+          return orderID;
+        });
+    },
+    onApprove(data, actions) {
+      return actions.order!.capture().then(async (details) => {
+        try {
+          await payOrder({ orderId: orderId!, ...details });
+          refetch();
+          toast.success('Order is paid successfully');
+        } catch (err) {
+          toast.error(getError(err as ApiError));
+        }
+      });
+    },
+    onError: (err) => {
+      toast.error(getError(err as ApiError));
+    },
+  };
+
+  return isPendingGet ? (
     <LoadingBox></LoadingBox>
   ) : error ? (
     <MessageBox variant='danger'>{getError(error as unknown)}</MessageBox>
@@ -125,6 +203,25 @@ const OrderPage: React.FC = () => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+                {!order.isPaid && (
+                  <ListGroup.Item>
+                    {isPending ? (
+                      <LoadingBox />
+                    ) : isRejected ? (
+                      <MessageBox variant='danger'>
+                        Error in connecting to PayPal
+                      </MessageBox>
+                    ) : (
+                      <div>
+                        <PayPalButtons
+                          {...paypalbuttonTransactionProps}
+                        ></PayPalButtons>
+                        <Button onClick={testPayHandler}>Test Pay</Button>
+                      </div>
+                    )}
+                    {loadingPay && <LoadingBox></LoadingBox>}
+                  </ListGroup.Item>
+                )}
               </ListGroup>
             </Card.Body>
           </Card>
@@ -132,6 +229,4 @@ const OrderPage: React.FC = () => {
       </Row>
     </div>
   );
-};
-
-export default OrderPage;
+}

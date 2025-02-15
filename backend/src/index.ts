@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
 import orderRoutes from './routes/orderRoutes';
 import seedRoute from './routes/seedRoute';
+import keyRoutes from './routes/keyRoutes';
 
 const MONGO_URI = process.env.MONGO_URI;
 mongoose.set('strictQuery', true);
@@ -28,6 +29,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/seed', seedRoute);
+app.use('/api/keys', keyRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
