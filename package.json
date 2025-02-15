@@ -1,0 +1,25 @@
+{
+  "name": "cortz-shipping",
+  "version": "1.0.0",
+  "description": "Cortz shipping e-commerce website",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\"  \"npm run dev --prefix frontend\" ",
+    "build": "cd backend && npm install && npm run build  && cd ../frontend && npm install && npm run build",
+    "start": "cross-env TG_ALLOW_MIXED=ALLOW node backend/build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allestercorton/cortz-shipping.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allestercorton/cortz-shipping/issues"
+  },
+  "homepage": "https://github.com/allestercorton/cortz-shipping#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3"
+  }
+}

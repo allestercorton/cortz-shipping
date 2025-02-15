@@ -43,7 +43,7 @@ const App: React.FC = () => {
         <Navbar expand='lg'>
           <Container>
             <Navbar.Brand as={Link} to='/'>
-              tsamazona
+              Cortz Shipping
             </Navbar.Brand>
             <Nav className='ms-auto d-flex align-items-center gap-3'>
               <Button
